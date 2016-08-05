@@ -590,7 +590,11 @@ inline void DecodeDepthNormal( float4 enc, out float depth, out float3 normal )
 	depth = DecodeFloatRG (enc.zw);
 	normal = DecodeViewNormalStereo (enc);
 }
-
+//DXT5nm 格式 A == x G == y;
+//w对应A通道,即法线的x
+//y对应G通道,即法线的y
+//法线是单位向量,xx + yy +zz = 1;
+//z = sqrt(1-（xx+yy)   ..saturate （0，1）范围的值
 inline fixed3 UnpackNormalDXT5nm (fixed4 packednormal)
 {
 	fixed3 normal;
@@ -599,7 +603,9 @@ inline fixed3 UnpackNormalDXT5nm (fixed4 packednormal)
 	return normal;
 }
 
-inline fixed3 UnpackNormal(fixed4 packednormal)
+//对法线贴图采用的时候，会进行解压缩从0-255映射到0-1
+//法线是单位向量，范围在-1 -- 1 . 从（0，1） 映射回（-1，1）  f(x) = 2*x - 1
+inline fixed3 UnpackNormal(fixed4 packednormal) 
 {
 	#if defined(UNITY_NO_DXT5nm)
 	return packednormal.xyz * 2 - 1;
