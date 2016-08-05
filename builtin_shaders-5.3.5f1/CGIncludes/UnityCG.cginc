@@ -131,6 +131,7 @@ inline float3 UnityObjectToWorldNormal( in float3 norm )
 }
 
 // Computes world space light direction, from world space position
+//_WorldSpaceLightPos0.w可以表明该光源的类型，如果为0表示是平行光，为1表示是点光源或者聚光灯光源。
 inline float3 UnityWorldSpaceLightDir( in float3 worldPos )
 {
 	#ifndef USING_LIGHT_MULTI_COMPILE

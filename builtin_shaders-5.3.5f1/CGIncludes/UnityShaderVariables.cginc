@@ -63,8 +63,9 @@ CBUFFER_END
 
 CBUFFER_START(UnityLighting)
 
+	//_WorldSpaceLightPos0.w可以表明该光源的类型，如果为0表示是平行光，为1表示是点光源或者聚光灯光源。
 	#ifdef USING_DIRECTIONAL_LIGHT
-	uniform half4 _WorldSpaceLightPos0;
+	uniform half4 _WorldSpaceLightPos0; //位置
 	#else
 	uniform float4 _WorldSpaceLightPos0;
 	#endif

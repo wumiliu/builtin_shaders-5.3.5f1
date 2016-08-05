@@ -40,7 +40,7 @@ half3 NormalizePerPixelNormal (half3 n)
 	#endif
 }
 
-//  用途：该函数为主光照函数  
+//  用途：该函数为主光照函数  (全局光是用的是平行光)
 //  说明：实例化一个UnityLight结构体对象，并进行相应的填充  
 //-------------------------------------------------------------------------------------
 UnityLight MainLight (half3 normalWorld)
@@ -133,25 +133,28 @@ half3x3 ExtractTangentToWorldPerPixel(half4 tan2world[3])
 }
 #endif
 
+//像素着色器 获取 世界坐标系下的法线
 half3 PerPixelWorldNormal(float4 i_tex, half4 tangentToWorld[3])
 {
-	#ifdef _NORMALMAP
+	#ifdef _NORMALMAP //凹凸纹理映射
 	half3 tangent = tangentToWorld[0].xyz;
 	half3 binormal = tangentToWorld[1].xyz;
 	half3 normal = tangentToWorld[2].xyz;
 
 	#if UNITY_TANGENT_ORTHONORMALIZE
-	normal = NormalizePerPixelNormal(normal);
+	normal = NormalizePerPixelNormal(normal); //归一化
 
 	// ortho-normalize Tangent
-	tangent = normalize (tangent - normal * dot(tangent, normal));
+	// T在N上的投影 p = （T . N）N   tangent = T - p  就是垂直N的向量了
+	// 因为在插值以后T N 向量可能不在互相垂直了，这个代码的作用是 通过从T中减去偏向N的部分，使T 重新垂直于N
+	tangent = normalize (tangent - normal * dot(tangent, normal)); //切线归一化
 
 	// recalculate Binormal
 	half3 newB = cross(normal, tangent);
-	binormal = newB * sign (dot (newB, binormal));
+	binormal = newB * sign (dot (newB, binormal));//sign 返回符号 -1 0 1
 	#endif
 
-	half3 normalTangent = NormalInTangentSpace(i_tex);
+	half3 normalTangent = NormalInTangentSpace(i_tex);//获得到切线空间下的法线
 	half3 normalWorld = NormalizePerPixelNormal(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z); // @TODO: see if we can squeeze this normalize on SM2.0 as well
 	#else
 	half3 normalWorld = normalize(tangentToWorld[2].xyz);
