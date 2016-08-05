@@ -190,10 +190,12 @@ inline float3 ObjSpaceViewDir( in float4 v )
 }
 
 // Declares 3x3 matrix 'rotation', filled with tangent space basis
+//TBN 从切线空间转换到物体空间 （w决定了方向互相垂直的有两个）
+//CG 构造的矩阵使用的是行优先矩阵，所以这边的rotation 代表的是从物体空间到切线空间的转换（因为是正交矩阵，转置就是逆矩阵）
 #define TANGENT_SPACE_ROTATION \
 float3 binormal = cross( normalize(v.normal), normalize(v.tangent.xyz) ) * v.tangent.w; \
 float3x3 rotation = float3x3( v.tangent.xyz, binormal, v.normal )
-
+//
 
 //在正向基础渲染通道中使用，根据4个不同的点光源计算出漫反射光照参数的rgb值
 // Used in ForwardBase pass: Calculates diffuse lighting from 4 point lights, with data packed in a special way.
