@@ -183,7 +183,7 @@ inline float3 WorldSpaceViewDir( in float4 localPos )
 	return UnityWorldSpaceViewDir(worldPos);
 }
 
-// Computes object space view direction
+// Computes object space view direction 模型空间下，观察方向 = 点到摄像机
 inline float3 ObjSpaceViewDir( in float4 v )
 {
 	float3 objSpaceCameraPos = mul(_World2Object, float4(_WorldSpaceCameraPos.xyz, 1)).xyz;

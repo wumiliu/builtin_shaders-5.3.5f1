@@ -183,6 +183,8 @@ half3 NormalInTangentSpace(float4 texcoords)
 }
 #endif
 
+//// 计算 uv 的偏移 delta
+//http://blog.csdn.net/w450468524/article/details/51649487
 float4 Parallax (float4 texcoords, half3 viewDir)
 {
 #if !defined(_PARALLAXMAP) || (SHADER_TARGET < 30)
@@ -190,6 +192,7 @@ float4 Parallax (float4 texcoords, half3 viewDir)
 	// SM20: no parallax
 	return texcoords;
 #else
+	// 高度图中描述的高度数据
 	half h = tex2D (_ParallaxMap, texcoords.xy).g;
 	float2 offset = ParallaxOffset1Step (h, _Parallax, viewDir);
 	return float4(texcoords.xy + offset, texcoords.zw + offset);

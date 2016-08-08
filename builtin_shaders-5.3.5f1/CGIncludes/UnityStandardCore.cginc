@@ -243,6 +243,7 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
 
 inline FragmentCommonData FragmentSetup (float4 i_tex, half3 i_eyeVec, half3 i_viewDirForParallax, half4 tangentToWorld[3], half3 i_posWorld)
 {
+	//视差贴图（Parallax Mapping）
 	i_tex = Parallax(i_tex, i_viewDirForParallax);
 
 	half alpha = Alpha(i_tex.xy);
@@ -462,7 +463,7 @@ VertexOutputForwardBase vertForwardBase (VertexInput v)
 	#ifdef _PARALLAXMAP
 	//声明一个由切线空间的基组成的3x3矩阵“rotation”   定义在cg.cginc
 	TANGENT_SPACE_ROTATION;
-	//计算视差的视角方向  
+	//计算视差的视角方向  指向相机向量
 	half3 viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
 	//分别将三个分量赋值给VertexOutputForwardBase结构体对象o的tangentToWorldAndParallax的三个分量  
 	o.tangentToWorldAndParallax[0].w = viewDirForParallax.x;
@@ -556,8 +557,10 @@ VertexOutputForwardAdd vertForwardAdd (VertexInput v)
 	//We need this for shadow receiving
 	TRANSFER_VERTEX_TO_FRAGMENT(o);
 
+	//如果是平行光的话_WorldSpaceLightPos0.w = 0 光照向量 = 点到光源的向量 和光传播方向相反
+	//
 	float3 lightDir = _WorldSpaceLightPos0.xyz - posWorld.xyz * _WorldSpaceLightPos0.w;
-	#ifndef USING_DIRECTIONAL_LIGHT
+	#ifndef USING_DIRECTIONAL_LIGHT  //如果不是平行光，需要归一化
 	lightDir = NormalizePerVertexNormal(lightDir);
 	#endif
 	o.tangentToWorldAndLightDir[0].w = lightDir.x;
@@ -566,7 +569,7 @@ VertexOutputForwardAdd vertForwardAdd (VertexInput v)
 
 	#ifdef _PARALLAXMAP
 	TANGENT_SPACE_ROTATION;
-	o.viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
+	o.viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex)); //从物体空间到切线空间的转换
 	#endif
 	
 	UNITY_TRANSFER_FOG(o,o.pos);

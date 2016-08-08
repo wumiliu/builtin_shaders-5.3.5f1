@@ -75,11 +75,15 @@ inline half3 PreMultiplyAlpha (half3 diffColor, half alpha, half oneMinusReflect
 
 // Same as ParallaxOffset in Unity CG, except:
 //  *) precision - half instead of float
+//视差贴图的计算
 half2 ParallaxOffset1Step (half h, half height, half3 viewDir)
 {
 	h = h * height - height/2.0;
 	half3 v = normalize(viewDir);
+	////单位指向相机向量.z +0.42
 	v.z += 0.42;
+	// 偏移.x = 高度*（单位指向相机向量的x / 单位指向相机向量的z）
+	// 偏移.y = 高度*（单位指向相机向量的y / 单位指向相机向量的z）
 	return h * (v.xy / v.z);
 }
 
