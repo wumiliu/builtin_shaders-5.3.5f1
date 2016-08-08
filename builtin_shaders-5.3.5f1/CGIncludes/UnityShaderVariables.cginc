@@ -18,7 +18,7 @@ CBUFFER_START(UnityPerCamera)
 	uniform float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
 	uniform float4 unity_DeltaTime; // dt, 1/dt, smoothdt, 1/smoothdt
 	
-	uniform float3 _WorldSpaceCameraPos;
+	uniform float3 _WorldSpaceCameraPos; //摄像机位置
 	
 	// x = 1 or -1 (-1 if projection is flipped)
 	// y = near plane

@@ -39,7 +39,7 @@ struct appdata_base {
 
 struct appdata_tan {
 	float4 vertex : POSITION;
-	float4 tangent : TANGENT;
+	float4 tangent : TANGENT; //切线
 	float3 normal : NORMAL;
 	float4 texcoord : TEXCOORD0;
 };
@@ -170,6 +170,7 @@ inline float3 ObjSpaceLightDir( in float4 v )
 }
 
 // Computes world space view direction, from object space position
+//世界坐标系下，观察方向 = 点到摄像机 --- 摄像机位置减去点位置
 inline float3 UnityWorldSpaceViewDir( in float3 worldPos )
 {
 	return _WorldSpaceCameraPos.xyz - worldPos;
@@ -365,7 +366,7 @@ inline fixed4 VertexLight( v2f_vertex_lit i, sampler2D mainTex )
 	return c;
 }
 
-
+////视差贴图的计算 ParallaxOffset1Step 返回值的精度不同而已
 // Calculates UV offset for parallax bump mapping
 inline float2 ParallaxOffset( half h, half height, half3 viewDir )
 {
