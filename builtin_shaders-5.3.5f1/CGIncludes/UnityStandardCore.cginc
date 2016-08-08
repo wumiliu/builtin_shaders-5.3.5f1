@@ -162,7 +162,7 @@ half3 PerPixelWorldNormal(float4 i_tex, half4 tangentToWorld[3])
 	return normalWorld;
 }
 
-#ifdef _PARALLAXMAP
+#ifdef _PARALLAXMAP //视差贴图(parallax mapping)
 #define IN_VIEWDIR4PARALLAX(i) NormalizePerPixelNormal(half3(i.tangentToWorldAndParallax[0].w,i.tangentToWorldAndParallax[1].w,i.tangentToWorldAndParallax[2].w))
 #define IN_VIEWDIR4PARALLAX_FWDADD(i) NormalizePerPixelNormal(i.viewDirForParallax.xyz)
 #else
