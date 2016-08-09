@@ -236,8 +236,8 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
 	FragmentCommonData o = (FragmentCommonData)0;
 	o.diffColor = diffColor;
 	o.specColor = specColor;
-	o.oneMinusReflectivity = oneMinusReflectivity;
-	o.oneMinusRoughness = oneMinusRoughness;
+	o.oneMinusReflectivity = oneMinusReflectivity;//1减去反射率；
+	o.oneMinusRoughness = oneMinusRoughness;//1减去粗糙度  
 	return o;
 } 
 

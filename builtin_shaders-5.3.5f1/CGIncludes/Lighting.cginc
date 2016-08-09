@@ -92,11 +92,13 @@ inline fixed4 LightingLambert_PrePass (SurfaceOutput s, half4 light)
 //而是用入射光向量和观察向量的半角向量来代替计算。这一方法也是没有物理依据的，只是这样计算计算量更少而且效果差不多甚至更好。如今的着色器十有八九会使用它。
 inline fixed4 UnityBlinnPhongLight (SurfaceOutput s, half3 viewDir, UnityLight light)
 {
+	// 1.半角向量：求（点到光源+点到摄像机）的单位向量，他们的中间平均值
 	half3 h = normalize (light.dir + viewDir);
-	
+	// 2.漫反射系数【点到光源单位向量与法线向量的余弦值】
 	fixed diff = max (0, dot (s.Normal, light.dir));
-	
+	// 3.高光底数【半角向量与法线向量的余弦值】
 	float nh = max (0, dot (s.Normal, h));
+	// 4.高光系数：根据高光低数和高光指数求得
 	float spec = pow (nh, s.Specular*128.0) * s.Gloss;
 	
 	fixed4 c;
@@ -131,6 +133,7 @@ inline half4 LightingBlinnPhong_Deferred (SurfaceOutput s, half3 viewDir, UnityG
 {
 	outDiffuseOcclusion = half4(s.Albedo, 1);
 	outSpecSmoothness = half4(_SpecColor.rgb, s.Specular);
+	//GBuffer  [-1,1]  -- ranform to (0,1) f(x) = 0.5x+0.5
 	outNormal = half4(s.Normal * 0.5 + 0.5, 1);
 	half4 emission = half4(s.Emission, 1);
 
@@ -149,6 +152,7 @@ inline void LightingBlinnPhong_GI (
 	gi = UnityGlobalIllumination (data, 1.0, s.Normal);
 }
 
+//deferred lighting final pass:
 inline fixed4 LightingBlinnPhong_PrePass (SurfaceOutput s, half4 light)
 {
 	fixed spec = light.a * s.Gloss;
