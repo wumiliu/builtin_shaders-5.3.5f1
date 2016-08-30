@@ -5,7 +5,7 @@
 #include "UnityGlobalIllumination.cginc"
 
 struct SurfaceOutput {
-	fixed3 Albedo; //反射光颜色
+	fixed3 Albedo; //反射光颜色 材质颜色
 	fixed3 Normal; //法线
 	fixed3 Emission; //自发光，用于增强物体自身的亮度，使之看起来好像可以自己发光
 	half Specular; //镜面高光 
@@ -25,6 +25,7 @@ struct SurfaceOutput {
 
 inline fixed4 UnityLambertLight (SurfaceOutput s, UnityLight light)
 {
+	//兰博特余弦定理
 	fixed diff = max (0, dot (s.Normal, light.dir));
 	
 	fixed4 c;
@@ -76,6 +77,7 @@ inline void LightingLambert_GI (
 	gi = UnityGlobalIllumination (data, 1.0, s.Normal);
 }
 
+//延迟渲染合并阶段
 inline fixed4 LightingLambert_PrePass (SurfaceOutput s, half4 light)
 {
 	fixed4 c;
@@ -98,7 +100,7 @@ inline fixed4 UnityBlinnPhongLight (SurfaceOutput s, half3 viewDir, UnityLight l
 	fixed diff = max (0, dot (s.Normal, light.dir));
 	// 3.高光底数【半角向量与法线向量的余弦值】
 	float nh = max (0, dot (s.Normal, h));
-	// 4.高光系数：根据高光低数和高光指数求得
+	// 4.高光系数：根据高光低数和高光指数求得 指数128的时候，基本就是最大了
 	float spec = pow (nh, s.Specular*128.0) * s.Gloss;
 	
 	fixed4 c;
@@ -153,6 +155,7 @@ inline void LightingBlinnPhong_GI (
 }
 
 //deferred lighting final pass:
+//延迟渲染合并阶段
 inline fixed4 LightingBlinnPhong_PrePass (SurfaceOutput s, half4 light)
 {
 	fixed spec = light.a * s.Gloss;

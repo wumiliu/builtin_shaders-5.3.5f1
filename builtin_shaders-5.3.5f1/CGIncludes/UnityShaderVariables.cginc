@@ -24,20 +24,20 @@ CBUFFER_START(UnityPerCamera)
 	// y = near plane
 	// z = far plane
 	// w = 1/far plane
-	uniform float4 _ProjectionParams;
+	uniform float4 _ProjectionParams; //近平面和远平面的位置。
 	
 	// x = width
 	// y = height
 	// z = 1 + 1.0/width
 	// w = 1 + 1.0/height
-	uniform float4 _ScreenParams;
+	uniform float4 _ScreenParams;//屏幕宽高参数
 	
 	// Values used to linearize the Z buffer (http://www.humus.name/temp/Linearize%20depth.txt)
 	// x = 1-far/near
 	// y = far/near
 	// z = x/far
 	// w = y/far
-	uniform float4 _ZBufferParams;
+	uniform float4 _ZBufferParams; //应该是延迟渲染中用吧(根据深度值 推出该位置的世界坐标)
 
 	// x = orthographic camera's width
 	// y = orthographic camera's height
@@ -61,11 +61,11 @@ CBUFFER_END
 
 // ----------------------------------------------------------------------------
 
-CBUFFER_START(UnityLighting)
+CBUFFER_START(UnityLighting) //光照的参数
 
 	//_WorldSpaceLightPos0.w可以表明该光源的类型，如果为0表示是平行光，为1表示是点光源或者聚光灯光源。
 	#ifdef USING_DIRECTIONAL_LIGHT
-	uniform half4 _WorldSpaceLightPos0; //位置
+	uniform half4 _WorldSpaceLightPos0; //位置  lightdir = nor(lightpos)  光源的向量
 	#else
 	uniform float4 _WorldSpaceLightPos0;
 	#endif
