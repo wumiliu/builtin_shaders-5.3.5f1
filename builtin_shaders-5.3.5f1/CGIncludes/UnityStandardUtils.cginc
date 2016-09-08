@@ -122,6 +122,7 @@ half3 BlendNormals(half3 n1, half3 n2)
 }
 //在世界空间中为每个顶点创建切线
 //其w分量用于标定奇数负比例变换（odd-negativescale transforms），通常取值为1.0或者-1.0。
+//内存中的数据都是行优先的
 half3x3 CreateTangentToWorldPerVertex(half3 normal, half3 tangent, half tangentSign)
 {
 	// For odd-negative scale transforms we need to flip the sign

@@ -202,8 +202,8 @@
 	float4 tex3Dbias(sampler3D x, in float4 t)		{ return x.t.SampleBias(x.s, t.xyz, t.w); }
 	float4 texCUBEbias(samplerCUBE x, in float4 t)	{ return x.t.SampleBias(x.s, t.xyz, t.w); }
 
-	float4 tex1Dlod(sampler1D x, in float4 t)		{ return x.t.SampleLOD(x.s, t.x, t.w); }
-	float4 tex2Dlod(sampler2D x, in float4 t)		{ return x.t.SampleLOD(x.s, t.xy, t.w); }
+	float4 tex1Dlod(sampler1D x, in float4 t)		{ return x.t.SampleLOD(x.s, t.x, t.w); } 
+	float4 tex2Dlod(sampler2D x, in float4 t)		{ return x.t.SampleLOD(x.s, t.xy, t.w); }//SampleLevel 顶点着色器中需要自己指定lod
 	float4 tex2Dlod(sampler2D_float x, in float4 t)		{ return x.t.SampleLOD(x.s, t.xy, t.w); }
 	float4 tex3Dlod(sampler3D x, in float4 t)		{ return x.t.SampleLOD(x.s, t.xyz, t.w); }
 	float4 texCUBElod(samplerCUBE x, in float4 t)	{ return x.t.SampleLOD(x.s, t.xyz, t.w); }

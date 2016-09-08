@@ -8,7 +8,7 @@ struct UnityLight
 {
 	half3 color;//光源颜色  
 	half3 dir;//光源方向  
-	half  ndotl;//入射光方向和当前表面法线方向的点积  
+	half  ndotl;//光源方向和当前表面法线方向的点积  
 };
 //Unity中间接光源参数的结构体  
 struct UnityIndirect
@@ -17,16 +17,17 @@ struct UnityIndirect
 	half3 specular;//镜面反射颜色  
 };
 //全局光照结构体 
+//里面的light是UnityLight类型，并不表示光源，而是用来表示当前像素受光源影响的量。
 struct UnityGI
 {
 	UnityLight light; //定义第一个光源参数结构体，表示第一个光源  
 	//若定义了DIRLIGHTMAP_SEPARATE（单独的方向光源光照贴图） 
-	#ifdef DIRLIGHTMAP_SEPARATE
+	#ifdef DIRLIGHTMAP_SEPARATE     //当烘培GI启用高光后，才会调用。
 		#ifdef LIGHTMAP_ON
 		 //若定义了LIGHTMAP_ON（打开光照贴图）  
 			UnityLight light2; //定义第二个光源参数结构体，表示第二个光源  
 		#endif
-		#ifdef DYNAMICLIGHTMAP_ON
+		#ifdef DYNAMICLIGHTMAP_ON // 预计算GI启用高光后，才会调用。
 		//若定义了DYNAMICLIGHTMAP_ON（打开动态光照贴图）  
 			UnityLight light3;//定义第三个光源参数结构体，表示第三个光源  
 		#endif

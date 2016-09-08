@@ -70,14 +70,15 @@ CBUFFER_START(UnityLighting) //光照的参数
 	uniform float4 _WorldSpaceLightPos0;
 	#endif
 
-	uniform float4 _LightPositionRange; // xyz = pos, w = 1/range
+	uniform float4 _LightPositionRange; // xyz = pos, w = 1/range 点光源才有效 阴影的时候才会有值
 
-	float4 unity_4LightPosX0;
-	float4 unity_4LightPosY0;
-	float4 unity_4LightPosZ0;
-	half4 unity_4LightAtten0;
-
-	half4 unity_LightColor[8];
+//四个非重要的光源 逐顶点
+	float4 unity_4LightPosX0;  // x coordinates of the 4 light sources in world space  
+	float4 unity_4LightPosY0;  // y coordinates of the 4 light sources in world space
+	float4 unity_4LightPosZ0;  // z coordinates of the 4 light sources in world space  
+	half4 unity_4LightAtten0; //scale factors for attenuation with squared distance 
+//四个非重要的光源 逐顶点
+	half4 unity_LightColor[8]; //0-4 是给四个非重要的光源用的 
 
 
 	float4 unity_LightPosition[8]; // view-space vertex light positions (position,1), or (-direction,0) for directional lights.
@@ -88,7 +89,7 @@ CBUFFER_START(UnityLighting) //光照的参数
 	half4 unity_LightAtten[8];
 	float4 unity_SpotDirection[8]; // view-space spot light directions, or (0,0,1,0) for non-spot
 
-	// SH lighting environment
+	// SH lighting environment  球谐函数
 	half4 unity_SHAr;
 	half4 unity_SHAg;
 	half4 unity_SHAb;

@@ -137,7 +137,7 @@ half3x3 ExtractTangentToWorldPerPixel(half4 tan2world[3])
 half3 PerPixelWorldNormal(float4 i_tex, half4 tangentToWorld[3])
 {
 	#ifdef _NORMALMAP //凹凸纹理映射
-	half3 tangent = tangentToWorld[0].xyz;
+	half3 tangent = tangentToWorld[0].xyz;//
 	half3 binormal = tangentToWorld[1].xyz;
 	half3 normal = tangentToWorld[2].xyz;
 
@@ -155,6 +155,7 @@ half3 PerPixelWorldNormal(float4 i_tex, half4 tangentToWorld[3])
 	#endif
 
 	half3 normalTangent = NormalInTangentSpace(i_tex);//获得到切线空间下的法线
+	////内存中的数据都是行优先的
 	half3 normalWorld = NormalizePerPixelNormal(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z); // @TODO: see if we can squeeze this normalize on SM2.0 as well
 	#else
 	half3 normalWorld = normalize(tangentToWorld[2].xyz);
@@ -203,7 +204,7 @@ struct FragmentCommonData
 };
 
 #ifndef UNITY_SETUP_BRDF_INPUT
-#define UNITY_SETUP_BRDF_INPUT SpecularSetup
+#define UNITY_SETUP_BRDF_INPUT 	
 #endif
 
 inline FragmentCommonData SpecularSetup (float4 i_tex)
@@ -266,13 +267,13 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
 	UnityGIInput d;
 	d.light = light;
 	d.worldPos = s.posWorld;
-	d.worldViewDir = -s.eyeVec;
+	d.worldViewDir = -s.eyeVec; //eyeVec 视线的方向，摄像机到点. worldViewDir 视角 点到摄像机
 	d.atten = atten;
 	#if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
 	d.ambient = 0;
 	d.lightmapUV = i_ambientOrLightmapUV;
 	#else
-	d.ambient = i_ambientOrLightmapUV.rgb;
+	d.ambient = i_ambientOrLightmapUV.rgb; //球谐函数的值
 	d.lightmapUV = 0;
 	#endif
 	d.boxMax[0] = unity_SpecCube0_BoxMax;
@@ -380,9 +381,9 @@ struct VertexInput
 
 struct VertexOutputForwardBase
 {
-	float4 pos							: SV_POSITION;//像素坐标  
-	float4 tex							: TEXCOORD0;
-	half3 eyeVec 						: TEXCOORD1;
+	float4 pos							: SV_POSITION;//像素位置  
+	float4 tex							: TEXCOORD0; //纹理坐标
+	half3 eyeVec 						: TEXCOORD1; //视线=摄像机到点的方向
 	half4 tangentToWorldAndParallax[3]	: TEXCOORD2;	// [3x3:tangentToWorld | 1x3:viewDirForParallax] //3x3为切线到世界矩阵的值，1x3为视差方向的值 
 	half4 ambientOrLightmapUV			: TEXCOORD5;	// SH or Lightmap UV // 球谐函数（Spherical harmonics）或光照贴图的UV坐标 
 	SHADOW_COORDS(6)//阴影坐标  
@@ -444,9 +445,9 @@ VertexOutputForwardBase vertForwardBase (VertexInput v)
 	//在世界空间中为每个顶点创建切线  
 	float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);
 	//分别为3个分量赋值  
-	o.tangentToWorldAndParallax[0].xyz = tangentToWorld[0];
-	o.tangentToWorldAndParallax[1].xyz = tangentToWorld[1];
-	o.tangentToWorldAndParallax[2].xyz = tangentToWorld[2];
+	o.tangentToWorldAndParallax[0].xyz = tangentToWorld[0]; //T 行优先直接用下标取出来的，就是行的值
+	o.tangentToWorldAndParallax[1].xyz = tangentToWorld[1]; //B
+	o.tangentToWorldAndParallax[2].xyz = tangentToWorld[2]; //N
 	#else
 	//否则，三个分量直接取为0，0和上面计算得到的normalW
 	o.tangentToWorldAndParallax[0].xyz = 0;
@@ -490,6 +491,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 	s.reflUVW		= i.reflUVW;
 	#endif
   //设置主光照  
+	//如果没烘培，直接使用主光源，烘焙的话，直接清零
 	UnityLight mainLight = MainLight (s.normalWorld);
 	//设置阴影的衰减系数  
 	half atten = SHADOW_ATTENUATION(i);
@@ -509,6 +511,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 	return OutputForward (c, s.alpha);
 }
 
+//标准base，像素阶段
 half4 fragForwardBase (VertexOutputForwardBase i) : SV_Target	// backward compatibility (this used to be the fragment entry function)
 {
 	return fragForwardBaseInternal(i);

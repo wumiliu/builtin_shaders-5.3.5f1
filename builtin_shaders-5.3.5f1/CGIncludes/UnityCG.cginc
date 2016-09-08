@@ -5,6 +5,7 @@
 
 #include "UnityShaderVariables.cginc"
 
+///英伟达官网地址 http://http.developer.nvidia.com/Cg/tex2Dlod.html
 uniform fixed4 unity_ColorSpaceGrey;
 uniform fixed4 unity_ColorSpaceDouble;
 uniform half4  unity_ColorSpaceDielectricSpec;
@@ -137,7 +138,7 @@ inline float3 UnityWorldSpaceLightDir( in float3 worldPos )
 	#ifndef USING_LIGHT_MULTI_COMPILE
 	return _WorldSpaceLightPos0.xyz - worldPos * _WorldSpaceLightPos0.w;
 	#else
-	#ifndef USING_DIRECTIONAL_LIGHT //顶点到光的方向 未归一化
+	#ifndef USING_DIRECTIONAL_LIGHT //顶点到光的方向 未归一化（非平行光）
 	return _WorldSpaceLightPos0.xyz - worldPos;
 	#else
 	return _WorldSpaceLightPos0.xyz;
@@ -264,6 +265,7 @@ float3 ShadeVertexLightsFull (float4 vertex, float3 normal, int lightCount, bool
 	return lightColor;
 }
 
+//顶点光照 （4个光）
 float3 ShadeVertexLights (float4 vertex, float3 normal)
 {
 	return ShadeVertexLightsFull (vertex, normal, 4, false);

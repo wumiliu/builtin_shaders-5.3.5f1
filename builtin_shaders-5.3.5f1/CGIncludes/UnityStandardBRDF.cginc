@@ -282,8 +282,8 @@ inline half3 DecodeHDR_NoLinearSupportInSM2 (half4 data, half4 decodeInstruction
 struct
 Unity_GlossyEnvironmentData
 {
-	half	roughness;
-	half3	reflUVW;
+	half	roughness;//粗糙度
+	half3	reflUVW;//反射贴图坐标
 };
 
 half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyEnvironmentData glossIn)
@@ -498,6 +498,7 @@ half4 BRDF3_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
 	half3 normal, half3 viewDir,
 	UnityLight light, UnityIndirect gi)
 {
+	//v = i - 2 * dot(i, n) * n
 	half3 reflDir = reflect (viewDir, normal);
 
 	half nl = light.ndotl;

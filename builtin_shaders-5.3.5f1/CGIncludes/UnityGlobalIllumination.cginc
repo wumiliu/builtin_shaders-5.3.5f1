@@ -79,7 +79,7 @@ inline void ResetUnityGI(out UnityGI outGI)
 inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld)
 {
 	UnityGI o_gi;
-	ResetUnityGI(o_gi);
+	ResetUnityGI(o_gi); //清零
 
 
 	#if !defined(LIGHTMAP_ON)

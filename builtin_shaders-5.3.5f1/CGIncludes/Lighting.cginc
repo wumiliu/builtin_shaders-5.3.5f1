@@ -100,7 +100,7 @@ inline fixed4 UnityBlinnPhongLight (SurfaceOutput s, half3 viewDir, UnityLight l
 	fixed diff = max (0, dot (s.Normal, light.dir));
 	// 3.高光底数【半角向量与法线向量的余弦值】
 	float nh = max (0, dot (s.Normal, h));
-	// 4.高光系数：根据高光低数和高光指数求得 指数128的时候，基本就是最大了
+	// 4.高光系数：根据高光底数和高光指数求得 指数128的时候，基本就是最大了
 	float spec = pow (nh, s.Specular*128.0) * s.Gloss;
 	
 	fixed4 c;
@@ -136,6 +136,7 @@ inline half4 LightingBlinnPhong_Deferred (SurfaceOutput s, half3 viewDir, UnityG
 	outDiffuseOcclusion = half4(s.Albedo, 1);
 	outSpecSmoothness = half4(_SpecColor.rgb, s.Specular);
 	//GBuffer  [-1,1]  -- ranform to (0,1) f(x) = 0.5x+0.5
+	//压缩
 	outNormal = half4(s.Normal * 0.5 + 0.5, 1);
 	half4 emission = half4(s.Emission, 1);
 
